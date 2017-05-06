@@ -96,7 +96,7 @@ export default class Sidebar extends Component {
       return (
 	<div className="server-list">
 	  <ZeroUI
-	    icon={{ name: "phone", scale: '48' }}
+	    icon={{ name: "phone-square", scale: '48' }}
 	    message="You don't register any extension yet"
 	    note="If you want to, click the blue button below" />
 	</div>
