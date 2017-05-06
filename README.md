@@ -1,13 +1,6 @@
-# Preact Redux Example
+# Web::Telephone
 
-A **10kb** Redux-powered alternative to [preact-boilerplate](https://github.com/developit/preact-boilerplate), implementing a To-Do List app.
-
-
-<img src="https://i.gyazo.com/d655af6fc8768487897b13eb31500aa7.gif" width="207" />
-
-
-> As of `v2`, now wonderfully simplified via [preact-redux](https://github.com/developit/preact-redux) (no more preact-compat!).
-
+(p)react+redux softphone using jssip or verto adapter.
 
 ---
 
