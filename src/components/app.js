@@ -3,7 +3,6 @@ import { connect } from 'preact-redux';
 import { bindActions } from '../util';
 import reduce from '../reducers';
 import * as actions from '../actions';
-import TodoItem from './todo-item';
 
 import Home from './home';
 import Sidebar from './sidebar';
