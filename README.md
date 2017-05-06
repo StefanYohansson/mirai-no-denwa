@@ -17,19 +17,9 @@
 **1. Clone this repo:**
 
 ```sh
-git clone https://github.com/developit/preact-redux-example.git my-app
-cd my-app
+git clone https://github.com/StefanYohansson/web-telephone.git
+cd web-telephone
 ```
-
-
-**2. Make it your own:**
-
-```sh
-rm -rf .git && git init && npm init
-```
-
-> :information_source: This re-initializes the repo and sets up your NPM project.
-
 
 **3. Install the dependencies:**
 
