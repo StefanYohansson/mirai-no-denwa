@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import ZeroUI from '../zeroui';
 
 export default class Sidebar extends Component {
   constructor(props) {
@@ -35,7 +36,7 @@ export default class Sidebar extends Component {
       });
     }
   }
-  
+
   toggleAddServer = e => {
     this.setState({
       ...this.state,
@@ -89,6 +90,19 @@ export default class Sidebar extends Component {
   };
 
   renderList = props => {
+    const { servers } = this.state;
+
+    if (!servers.length) {
+      return (
+	<div className="server-list">
+	  <ZeroUI
+	    icon={{ name: "phone", scale: '48' }}
+	    message="You don't register any extension yet"
+	    note="If you want to, click the blue button below" />
+	</div>
+      );
+    }
+
     return (
       <ul className="server-list">
 	{this.state.servers.map(server => (
@@ -126,13 +140,13 @@ export default class Sidebar extends Component {
       alert("This number is already in use.");
       return;
     }
-    
+
     const server = {
       ws: this.inputWs.value,
       number: this.inputNumber.value,
       password: this.inputPassword.value
     };
-    
+
     servers.push(server);
     this.setState({
       ...this.state,
@@ -142,7 +156,7 @@ export default class Sidebar extends Component {
     if (this.state.currentServer == "") {
       this.selectFirst();
     }
-    
+
     localStorage.setItem('servers', JSON.stringify(servers));
 
     this.toggleAddServer();
@@ -158,7 +172,7 @@ export default class Sidebar extends Component {
   removeServer = number => {
     if (!confirm('Do you want to remove selected server?'))
       return;
-    
+
     const { servers } = this.state;
 
     const serverIndex = servers.findIndex(server => server.number == number);
