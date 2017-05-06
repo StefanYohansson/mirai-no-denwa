@@ -49,6 +49,18 @@ html, body {
     width: 25%;
     float: right;
 
+    input[type="text"] {
+	margin-top: 10px;
+	padding: 10px;
+	border: none;
+	border-bottom: solid 2px #c9c9c9;
+	transition: border 0.3s;
+    }
+    input[type="text"]:focus,
+    input[type="text"].focus {
+	border-bottom: solid 2px #969696;
+    }
+
     .server-list, .new-server-form {
 	padding: 0;
 	height: ~"calc(100% - 68px)";
