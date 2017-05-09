@@ -54,7 +54,8 @@
   "dependencies": {
     "preact": "^8.1.0",
     "preact-redux": "^1.2.0",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.2.0"
   },
   "main": "webpack.config.babel.js"
 }

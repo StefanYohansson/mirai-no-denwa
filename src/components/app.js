@@ -7,12 +7,25 @@ import * as actions from '../actions';
 import Home from './home';
 import Sidebar from './sidebar';
 
+const REGISTER_EXTENSION_LABEL = "Please, register an extension to make a call.";
+const REGISTER_CALL = "Make a call.";
+
 @connect(reduce, bindActions(actions))
 export default class App extends Component {
   render() {
     return (
       <div id="app">
-	<input type="text" name="number" className="dial-input" />
+	<input
+	   type="text"
+	   name="number"
+	   disabled={this.props.currentServer === ""}
+	   title={
+	     this.props.currentServer == ""
+	       ? REGISTER_EXTENSION_LABEL
+	       : REGISTER_CALL
+	   }
+	   className="dial-input"
+	   />
 	<main className="content">
 	  <Home />
 	</main>

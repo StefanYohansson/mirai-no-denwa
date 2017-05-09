@@ -1,4 +1,5 @@
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 
 let ACTIONS = {
   ADD_SERVER: ({ servers, ...state }, { server }) => ({
@@ -22,9 +23,9 @@ let ACTIONS = {
 const INITIAL = {
   servers: (localStorage.getItem('servers') &&
 	    JSON.parse(localStorage.getItem('servers'))) || [],
-  currentServer: ""
+  currentServer: localStorage.getItem('currentServer') || ""
 };
 
 export default createStore( (state, action) => (
   action && ACTIONS[action.type] ? ACTIONS[action.type](state, action) : state
-), INITIAL, window.devToolsExtension && window.devToolsExtension());
+), INITIAL, applyMiddleware(thunk));

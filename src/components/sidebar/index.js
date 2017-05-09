@@ -16,15 +16,17 @@ export default class Sidebar extends Component {
   }
 
   componentDidMount() {
-    this.selectFirst();
+    if (!this.props.currentServer)
+      this.selectFirst();
   }
 
-  selectFirst = () => {
+  selectFirst = (optServers = []) => {
     const { servers, updateCurrentServer } = this.props;
+    const selServers = optServers.length ? optServers : servers;
 
     // select first if length >= 1
-    if (servers.length) {
-      this.selectServer(servers[0].number);
+    if (selServers.length) {
+      this.selectServer(selServers[0].number);
     } else {
       updateCurrentServer("");
     }
@@ -140,22 +142,22 @@ export default class Sidebar extends Component {
       password: this.inputPassword.value
     };
 
-    addServer(server);
-    const updatedServers = [ ...servers, server ];
+    addServer(server).then(newServers => {
+      if (currentServer == "") {
+	this.selectFirst(newServers);
+      }
 
-    if (currentServer == "") {
-      this.selectFirst();
-    }
+      localStorage.setItem('servers', JSON.stringify(newServers));
 
-    localStorage.setItem('servers', JSON.stringify(updatedServers));
-
-    this.toggleAddServer();
+      this.toggleAddServer();
+    });
   };
 
   selectServer = number => {
     const { updateCurrentServer } = this.props;
 
     updateCurrentServer(number);
+    localStorage.setItem("currentServer", number);
   }
 
   removeServer = number => {
@@ -171,12 +173,12 @@ export default class Sidebar extends Component {
       return;
 
     const rServers = servers.splice(serverIndex, 1);
-    removeServer(number);
+    removeServer(number).then(newServers => {
+      if (serverIndex == 0 || this.props.currentServer == server.number)
+	this.selectFirst();
 
-    if (serverIndex == 0 || this.props.currentServer == server.number)
-      this.selectFirst();
-
-    localStorage.setItem('servers', JSON.stringify(rServers));
+      localStorage.setItem('servers', JSON.stringify(newServers));
+    });
   };
 
   render() {
