@@ -4,17 +4,13 @@ import ZeroUI from '../zeroui';
 export default class Sidebar extends Component {
   constructor(props) {
     super(props);
-    let servers = localStorage.getItem('servers') &&
-	JSON.parse(localStorage.getItem('servers'));
+    const { servers } = props;
 
-    if (!servers) {
-      servers = [];
+    if (!servers.length) {
       localStorage.setItem('servers', JSON.stringify(servers));
     }
 
     this.state = {
-      currentServer: '',
-      servers,
       addServer: false,
     };
   }
@@ -24,16 +20,13 @@ export default class Sidebar extends Component {
   }
 
   selectFirst = () => {
-    const { servers } = this.state;
+    const { servers, updateCurrentServer } = this.props;
 
     // select first if length >= 1
     if (servers.length) {
       this.selectServer(servers[0].number);
     } else {
-      this.setState({
-	...this.state,
-	currentServer: ""
-      });
+      updateCurrentServer("");
     }
   }
 
@@ -90,7 +83,7 @@ export default class Sidebar extends Component {
   };
 
   renderList = props => {
-    const { servers } = this.state;
+    const { servers } = this.props;
 
     if (!servers.length) {
       return (
@@ -105,9 +98,9 @@ export default class Sidebar extends Component {
 
     return (
       <ul className="server-list">
-	{this.state.servers.map(server => (
+	{this.props.servers.map(server => (
 	  <li
-	    className={server.number == this.state.currentServer ? "active" : ""}
+	    className={server.number == this.props.currentServer ? "active" : ""}
 	    onClick={() => this.selectServer(server.number)}>
 	    {server.number}
 	    <i onClick={(e) => {
@@ -129,7 +122,7 @@ export default class Sidebar extends Component {
   };
 
   saveServer = () => {
-    const { servers } = this.state;
+    const { servers, currentServer, addServer } = this.props;
 
     if (this.inputNumber.value == "" || this.inputWs.value == "") {
       alert("You should provide Number and Webservice values.");
@@ -147,33 +140,29 @@ export default class Sidebar extends Component {
       password: this.inputPassword.value
     };
 
-    servers.push(server);
-    this.setState({
-      ...this.state,
-      servers
-    });
+    addServer(server);
+    const updatedServers = [ ...servers, server ];
 
-    if (this.state.currentServer == "") {
+    if (currentServer == "") {
       this.selectFirst();
     }
 
-    localStorage.setItem('servers', JSON.stringify(servers));
+    localStorage.setItem('servers', JSON.stringify(updatedServers));
 
     this.toggleAddServer();
   };
 
   selectServer = number => {
-    this.setState({
-      ...this.state,
-      currentServer: number
-    });
+    const { updateCurrentServer } = this.props;
+
+    updateCurrentServer(number);
   }
 
   removeServer = number => {
     if (!confirm('Do you want to remove selected server?'))
       return;
 
-    const { servers } = this.state;
+    const { servers, removeServer } = this.props;
 
     const serverIndex = servers.findIndex(server => server.number == number);
     const server = servers.find(server => server.number == number);
@@ -182,16 +171,12 @@ export default class Sidebar extends Component {
       return;
 
     const rServers = servers.splice(serverIndex, 1);
+    removeServer(number);
 
-    this.setState({
-      ...this.state,
-      servers
-    });
-
-    if (serverIndex == 0 || this.state.currentServer == server.number)
+    if (serverIndex == 0 || this.props.currentServer == server.number)
       this.selectFirst();
 
-    localStorage.setItem('servers', JSON.stringify(servers));
+    localStorage.setItem('servers', JSON.stringify(rServers));
   };
 
   render() {

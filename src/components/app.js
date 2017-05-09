@@ -16,7 +16,11 @@ export default class App extends Component {
 	<main className="content">
 	  <Home />
 	</main>
-	<Sidebar />
+	<Sidebar
+	   currentServer={this.props.currentServer}
+	   servers={this.props.servers}
+	   {...this.props}
+	/>
       </div>
     );
   }

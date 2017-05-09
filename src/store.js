@@ -1,22 +1,28 @@
 import { createStore } from 'redux';
 
 let ACTIONS = {
-  ADD_TODO: ({ todos, ...state }, { text }) => ({
-    todos: [...todos, {
-      id: Math.random().toString(36).substring(2),
-      text
+  ADD_SERVER: ({ servers, ...state }, { server }) => ({
+    servers: [...servers, {
+      ...server
     }],
     ...state
   }),
 
-  REMOVE_TODO: ({ todos, ...state }, { todo }) => ({
-    todos: todos.filter( i => i!==todo ),
+  REMOVE_SERVER: ({ servers, ...state }, { number }) => ({
+    servers: servers.filter( server => server.number !== number ),
+    ...state
+  }),
+
+  UPDATE_CURRENT_SERVER: ({ currentServer, ...state }, { number }) => ({
+    currentServer: number,
     ...state
   })
 };
 
 const INITIAL = {
-  todos: []
+  servers: (localStorage.getItem('servers') &&
+	    JSON.parse(localStorage.getItem('servers'))) || [],
+  currentServer: ""
 };
 
 export default createStore( (state, action) => (

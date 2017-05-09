@@ -1,14 +1,21 @@
 
-export function addTodo(text) {
+export function addServer(server) {
   return {
-    type: 'ADD_TODO',
-    text
+    type: 'ADD_SERVER',
+    server
   };
 }
 
-export function removeTodo(todo) {
+export function removeServer(number) {
   return {
-    type: 'REMOVE_TODO',
-    todo
+    type: 'REMOVE_SERVER',
+    number
+  };
+}
+
+export function updateCurrentServer(number) {
+  return {
+    type: 'UPDATE_CURRENT_SERVER',
+    number
   };
 }
