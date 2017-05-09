@@ -164,7 +164,7 @@ export default class Sidebar extends Component {
     if (!confirm('Do you want to remove selected server?'))
       return;
 
-    const { servers, removeServer } = this.props;
+    const { servers, removeServer, updateCurrentServer } = this.props;
 
     const serverIndex = servers.findIndex(server => server.number == number);
     const server = servers.find(server => server.number == number);
@@ -176,6 +176,11 @@ export default class Sidebar extends Component {
     removeServer(number).then(newServers => {
       if (serverIndex == 0 || this.props.currentServer == server.number)
 	this.selectFirst();
+
+      if (!newServers.length) {
+	localStorage.setItem('currentServer', "");
+	updateCurrentServer("");
+      }
 
       localStorage.setItem('servers', JSON.stringify(newServers));
     });
