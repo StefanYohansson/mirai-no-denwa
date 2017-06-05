@@ -52,6 +52,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "jssip": "^3.0.8",
     "preact": "^8.1.0",
     "preact-redux": "^1.2.0",
     "redux": "^3.6.0",
