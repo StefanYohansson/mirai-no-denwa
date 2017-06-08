@@ -112,6 +112,14 @@ export default class Sidebar extends Component {
               e.stopPropagation();
               this.removeServer(server.number);
             }} className="fa fa-close pull-right"></i>
+            <ul>
+              {_.map(this.props.calls[server.number] || [], (call) => (
+                <li>
+                  {call.from}
+                  <button onClick={() => call.session.answer()}>Answer</button>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>

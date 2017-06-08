@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import WebphoneAdapter from './webphone';
@@ -7,28 +8,52 @@ let ACTIONS = {
     servers,
     ...state
   }, {server}) => ({
+    ...state,
     servers: [
       ...servers, {
         ...server
       }
-    ],
-    ...state
+    ]
   }),
 
   REMOVE_SERVER: ({
     servers,
     ...state
   }, {number}) => ({
-    servers: servers.filter(server => server.number !== number),
-    ...state
+    ...state,
+    servers: servers.filter(server => server.number !== number)
   }),
 
   UPDATE_CURRENT_SERVER: ({
     currentServer,
     ...state
   }, {number}) => ({
-    currentServer: number,
+    ...state,
+    currentServer: number
+  }),
+
+  ADD_CALL: ({
+    calls,
     ...state
+  }, {serverNumber, call}) => ({
+    ...state,
+    calls: {
+      ...calls,
+      [serverNumber]: [call, ...(calls[serverNumber] || [])]
+    }
+  }),
+
+  REMOVE_CALL: ({
+    calls,
+    ...state
+  }, {serverNumber, call}) => ({
+    ...state,
+    calls: _.reduce(calls, (acc, cl, number) => {
+      if (serverNumber == number) {
+        acc[number] = cl.filter(c => !_.isEqual(c, call));
+      }
+      return acc;
+    }, {})
   })
 };
 
@@ -45,7 +70,8 @@ function initialStateServers(servers) {
 
 const INITIAL = {
   servers: initialStateServers(localStorage.getItem('servers')),
-  currentServer: localStorage.getItem('currentServer') || ""
+  currentServer: localStorage.getItem('currentServer') || "",
+  calls: {}
 };
 
 export default createStore((state, action) => (action && ACTIONS[action.type]

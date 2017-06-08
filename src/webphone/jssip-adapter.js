@@ -1,4 +1,6 @@
 import JsSIP from 'jssip';
+import {addCall, removeCall} from '../actions';
+import getInstance from './dispatcher';
 
 // put a if here
 JsSIP.debug.enable('JsSIP:*');
@@ -9,34 +11,71 @@ export default class JSIP {
     const configuration = {
       sockets: [socket],
       uri: `sip:${server.number}`,
-      password: server.password
+      password: server.password,
+      session_timers: false
     };
 
     this.ua = new JsSIP.UA(configuration);
     this.ua.start();
 
+    this.number = server.number;
+
     this.registerEvents(this.ua);
   }
 
   registerEvents(ua) {
-    ua.on('connected', function(e) {
+    ua.on('connected', (e) => {
       console.debug('connected', e);
     });
 
-    ua.on('disconnected', function(e) {
+    ua.on('disconnected', (e) => {
       console.debug('disconnected', e);
     });
 
-    ua.on('registered', function(e) {
+    ua.on('registered', (e) => {
       console.debug('registered', e);
     });
 
-    ua.on('unregistered', function(e) {
+    ua.on('unregistered', (e) => {
       console.debug('unregistered', e);
     });
 
-    ua.on('registrationFailed', function(e) {
+    ua.on('registrationFailed', (e) => {
       console.debug('registrationFailed', e);
+    });
+
+    this.registerCallEvents(ua);
+  }
+
+  registerCallEvents(ua) {
+    ua.on('newRTCSession', (ev) => {
+      const {session} = ev;
+
+      const store = getInstance();
+      const { dispatch } = store;
+
+      const _call = {
+        from: ev.request.from.toString(),
+        to: ev.request.to.toString(),
+        session
+      };
+
+      if (session.direction == "incoming") {
+        console.log('store?', store, session, _call);
+        dispatch(addCall(this.number, _call));
+      }
+
+      session.on('accepted', (e) => {});
+
+      session.on('confirmed', (e) => {});
+
+      session.on('ended', (e) => {
+        dispatch(removeCall(this.number, _call));
+      });
+
+      session.on('failed', (e) => {
+        dispatch(removeCall(this.number, _call));
+      });
     });
   }
 
@@ -60,7 +99,7 @@ export default class JSIP {
       'eventHandlers': eventHandlers,
       'mediaConstraints': {
         'audio': true,
-        'video': true
+        'video': false
       },
       ...options
     };

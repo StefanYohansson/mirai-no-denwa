@@ -21,6 +21,22 @@ export function updateCurrentServer(number) {
   };
 }
 
+export function addCall(serverNumber, call) {
+  return {
+    type: 'ADD_CALL',
+    serverNumber,
+    call
+  };
+}
+
+export function removeCall(serverNumber, call) {
+  return {
+    type: 'REMOVE_CALL',
+    serverNumber,
+    call
+  };
+}
+
 export function addServer(server) {
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
