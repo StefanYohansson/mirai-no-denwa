@@ -1,3 +1,4 @@
+import WebphoneAdapter from './webphone';
 
 function add(server) {
   return {
@@ -20,9 +21,28 @@ export function updateCurrentServer(number) {
   };
 }
 
+export function addCall(serverNumber, call) {
+  return {
+    type: 'ADD_CALL',
+    serverNumber,
+    call
+  };
+}
+
+export function removeCall(serverNumber, call) {
+  return {
+    type: 'REMOVE_CALL',
+    serverNumber,
+    call
+  };
+}
+
 export function addServer(server) {
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
+      const phoneAdapter = new WebphoneAdapter;
+      server['instance'] = phoneAdapter.set('jssip').new(server);
+      server['type'] = 'jssip';
       dispatch(add(server));
       resolve(getState().servers);
     });
