@@ -50,43 +50,6 @@ export default class Sidebar extends Component {
     );
   };
 
-  renderConfirmButtons = props => {
-    return (
-      <div>
-        <button className="confirm-server-btn" onClick={e => {
-          this.saveServer();
-        }}>
-          <i className="fa fa-check"></i>
-        </button>
-        <button className="cancel-server-btn" onClick={e => {
-          this.resetInputs();
-          this.toggleAddServer(e);
-        }}>
-          <i className="fa fa-close"></i>
-        </button>
-      </div>
-    );
-  };
-
-  renderForm = props => {
-    return (
-      <form className="form new-server-form">
-        <div className="form-control">
-          <label>WS Address</label>
-          <input type="text" name="ws" ref={c => this.inputWs = c} className="input-text"/>
-        </div>
-        <div className="form-control">
-          <label>Number(@domain)</label>
-          <input type="text" name="number" ref={c => this.inputNumber = c} className="input-text"/>
-        </div>
-        <div className="form-control">
-          <label>Password</label>
-          <input type="text" name="password" ref={c => this.inputPassword = c} className="input-text"/>
-        </div>
-      </form>
-    );
-  };
-
   renderList = props => {
     const {servers} = this.props;
 
@@ -126,42 +89,6 @@ export default class Sidebar extends Component {
     );
   };
 
-  resetInputs = () => {
-    this.inputWs.value = "";
-    this.inputNumber.value = "";
-    this.inputPassword.value = "";
-  };
-
-  saveServer = () => {
-    const {servers, currentServer, addServer} = this.props;
-
-    if (this.inputNumber.value == "" || this.inputWs.value == "") {
-      alert("You should provide Number and Webservice values.");
-      return;
-    }
-
-    if (servers.some(server => server.number == this.inputNumber.value)) {
-      alert("This number is already in use.");
-      return;
-    }
-
-    const server = {
-      ws: this.inputWs.value,
-      number: this.inputNumber.value,
-      password: this.inputPassword.value
-    };
-
-    addServer(server).then(newServers => {
-      if (currentServer == "") {
-        this.selectFirst(newServers);
-      }
-
-      setServersStorage(newServers);
-
-      this.toggleAddServer();
-    });
-  };
-
   selectServer = number => {
     const {updateCurrentServer} = this.props;
 
@@ -196,17 +123,95 @@ export default class Sidebar extends Component {
   };
 
   render() {
+    const onCancel = e => {
+      this.toggleAddServer(e);
+    }
+
     return (
       <aside className="sidebar">
         {this.state.addServer
-          ? this.renderForm(this.props)
+          ? <AddingServerForm {...this.props} onCancel={onCancel}/>
           : this.renderList(this.props)}
         <div className="wrapper-buttons">
-          {this.state.addServer
-            ? this.renderConfirmButtons(this.props)
-            : this.renderAddButton(this.props)}
+          {this.state.addServer || this.renderAddButton(this.props)}
         </div>
       </aside>
+    );
+  };
+}
+
+class AddingServerForm extends Component {
+  resetInputs = () => {
+    this.inputWs.value = "";
+    this.inputNumber.value = "";
+    this.inputPassword.value = "";
+  }
+
+  saveServer = () => {
+    const { servers, currentServer, addServer } = this.props;
+
+    if (this.inputNumber.value == "" || this.inputWs.value == "") {
+      alert("You should provide Number and Webservice values.");
+      return;
+    }
+
+    if (servers.some(server => server.number == this.inputNumber.value)) {
+      alert("This number is already in use.");
+      return;
+    }
+
+    const server = {
+      ws: this.inputWs.value,
+      number: this.inputNumber.value,
+      password: this.inputPassword.value
+    };
+
+    addServer(server).then(newServers => {
+      if (currentServer == "") {
+        this.selectFirst(newServers);
+      }
+
+      setServersStorage(newServers);
+
+      this.toggleAddServer();
+    });
+  };
+
+  render = props => {
+    const ok = (e) => {
+      this.saveServer();
+    };
+
+    const cancel = (e) => {
+      this.props.onCancel(e);
+      this.resetInputs();
+    };
+
+    return (
+      <form className="form new-server-form">
+        <div className="form-control">
+          <label>WS Address</label>
+          <input type="text" name="ws" ref={c => this.inputWs = c} className="input-text"/>
+        </div>
+        <div className="form-control">
+          <label>Number(@domain)</label>
+          <input type="text" name="number" ref={c => this.inputNumber = c} className="input-text"/>
+        </div>
+        <div className="form-control">
+          <label>Password</label>
+          <input type="text" name="password" ref={c => this.inputPassword = c} className="input-text"/>
+        </div>
+        <div className="wrapper-buttons">
+          <div>
+            <button className="confirm-server-btn" onClick={ok}>
+              <i className="fa fa-check"></i>
+            </button>
+            <button className="cancel-server-btn" onClick={cancel}>
+              <i className="fa fa-close"></i>
+            </button>
+          </div>
+        </div>
+      </form>
     );
   };
 }
